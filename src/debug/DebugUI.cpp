@@ -4,6 +4,13 @@
 
 namespace sc {
 
+static const char* kBehaviorNames[AI_COUNT] = {
+    "patrol", "chaser", "sentry", "flyer", "coward",
+};
+static const char* behaviorName(std::uint8_t b) {
+    return b < AI_COUNT ? kBehaviorNames[b] : "?";
+}
+
 void debugHud(DebugState& dbg, World& w, Physics& phys, PlayerConfig& player) {
     if (!dbg.showHud) return;
 
@@ -14,12 +21,16 @@ void debugHud(DebugState& dbg, World& w, Physics& phys, PlayerConfig& player) {
     ImGui::Text("Entities alive: %zu / cap %zu", w.aliveCount, worldCapacity(w));
     ImGui::Text("Drawn last frame: %d", dbg.drawnLastFrame);
 
-    ImGui::SeparatorText("Spawn");
+    ImGui::SeparatorText("Crowd");
     static int spawnN = 1000;
     ImGui::SliderInt("count", &spawnN, 1, 5000);
     if (ImGui::Button("Spawn")) dbg.spawnRequest += spawnN;
     ImGui::SameLine();
     if (ImGui::Button("Despawn")) dbg.despawnRequest += spawnN;
+
+    ImGui::SeparatorText("Enemies");
+    ImGui::Combo("brain", &dbg.enemyBehavior, kBehaviorNames, AI_COUNT);
+    if (ImGui::Button("Spawn enemy near player")) dbg.enemyRequest += 1;
 
     ImGui::SeparatorText("Physics");
     ImGui::SliderFloat("gravity", &phys.gravity, 0.0f, 4000.0f);
@@ -45,6 +56,9 @@ void debugHud(DebugState& dbg, World& w, Physics& phys, PlayerConfig& player) {
         ImGui::Text("vel (%.1f, %.1f)", w.vel[e].x, w.vel[e].y);
         ImGui::Text("anim id %u  frame %u%s", w.anim[e].animId, w.anim[e].frameIdx,
                     (w.flags[e] & FLAG_GROUNDED) ? "  [grounded]" : "");
+        ImGui::Text("hp %d  team %u", w.health[e], w.team[e]);
+        if (w.flags[e] & FLAG_ENEMY)
+            ImGui::Text("brain: %s", behaviorName(w.ai[e].behavior));
     } else if (dbg.inspected != INVALID_ENTITY) {
         ImGui::TextDisabled("(not alive)");
     }

@@ -6,7 +6,9 @@ namespace sc {
 void appRun(const AppConfig& cfg, const AppCallbacks& cb) {
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
     InitWindow(cfg.width, cfg.height, cfg.title);
-    SetTargetFPS(0); // vsync paces; fixed-timestep handles sim
+    InitAudioDevice();      // platform resource, like the window; sounds load after this
+    SetExitKey(KEY_NULL);   // ESC is gameplay (pause), not quit
+    SetTargetFPS(0);        // vsync paces; fixed-timestep handles sim
 
     if (cb.init) cb.init();
 
@@ -22,6 +24,7 @@ void appRun(const AppConfig& cfg, const AppCallbacks& cb) {
     }
 
     if (cb.shutdown) cb.shutdown();
+    CloseAudioDevice();
     CloseWindow();
 }
 

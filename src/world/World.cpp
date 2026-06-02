@@ -10,7 +10,12 @@ static void worldGrow(World& w, std::size_t n) {
     w.sheet.resize(n, 0);
     w.anim.resize(n);
     w.intent.resize(n);
+    w.ai.resize(n);
     w.tint.resize(n, 0xFFFFFFFFu);
+    w.health.resize(n, 0);
+    w.lifetime.resize(n, -1.0f);
+    w.cooldown.resize(n, 0.0f);
+    w.team.resize(n, TEAM_NEUTRAL);
     w.generation.resize(n, 0);
     w.denseSlot.resize(n, INVALID_INDEX);
 }
@@ -23,7 +28,12 @@ void worldInit(World& w, std::size_t reserve) {
     w.sheet.reserve(reserve);
     w.anim.reserve(reserve);
     w.intent.reserve(reserve);
+    w.ai.reserve(reserve);
     w.tint.reserve(reserve);
+    w.health.reserve(reserve);
+    w.lifetime.reserve(reserve);
+    w.cooldown.reserve(reserve);
+    w.team.reserve(reserve);
     w.generation.reserve(reserve);
     w.dense.reserve(reserve);
     w.denseSlot.reserve(reserve);
@@ -43,10 +53,15 @@ Entity worldCreate(World& w) {
     w.pos[e]    = {};
     w.vel[e]    = {};
     w.size[e]   = {16.0f, 16.0f};
-    w.sheet[e]  = 0;
-    w.anim[e]   = {};
-    w.intent[e] = {};
-    w.tint[e]   = 0xFFFFFFFFu;
+    w.sheet[e]    = 0;
+    w.anim[e]     = {};
+    w.intent[e]   = {};
+    w.ai[e]       = {};
+    w.tint[e]     = 0xFFFFFFFFu;
+    w.health[e]   = 0;
+    w.lifetime[e] = -1.0f;   // persistent until a spawner sets a TTL
+    w.cooldown[e] = 0.0f;
+    w.team[e]     = TEAM_NEUTRAL;
 
     // Append to the dense list.
     w.denseSlot[e] = static_cast<std::uint32_t>(w.aliveCount);
@@ -73,6 +88,14 @@ void worldDestroy(World& w, Entity handle) {
     w.flags[e] = FLAG_NONE;
     ++w.generation[e]; // invalidate any stored handle to this slot
     w.freeList.push_back(e);
+}
+
+void worldFlushDestroys(World& w) {
+    // worldDestroy via a fresh handle: a slot queued twice is dead on the second
+    // visit, so worldResolve rejects it — the drain is idempotent per slot.
+    for (EntityIndex e : w.destroyQueue)
+        if (worldAliveIndex(w, e)) worldDestroy(w, worldHandle(w, e));
+    w.destroyQueue.clear();
 }
 
 } // namespace sc

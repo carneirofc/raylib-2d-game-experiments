@@ -17,12 +17,13 @@ struct PlayerConfig {
 };
 
 // Hardware -> Intent. Reads keyboard, writes intent[] for FLAG_PLAYER entities.
-// No gameplay knowledge — could be swapped for AI/network without touching
-// controlUpdate.
+// No gameplay knowledge — enemies get the same Intent from aiUpdate instead, and
+// the downstream control/weapon code can't tell the two sources apart.
 void inputUpdate(World& w);
 
-// Intent -> effects. Consumes intent[] for FLAG_PLAYER entities: horizontal
-// velocity, jump (only when grounded), facing flip, and animation selection.
+// Intent -> effects. Consumes intent[] for every actor (FLAG_PLAYER|FLAG_ENEMY):
+// horizontal velocity, jump (only when grounded), facing flip, and animation
+// selection. Firing is handled separately by weaponUpdate (it needs to spawn).
 void controlUpdate(World& w, const PlayerConfig& cfg, const PlayerAnims& anims);
 
 } // namespace sc

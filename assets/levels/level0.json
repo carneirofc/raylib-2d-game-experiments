@@ -1,6 +1,17 @@
 {
   "world": { "width": 6400, "height": 1280 },
-  "spawn": { "player": { "x": 100, "y": 100 }, "crowd": 1000 },
+  "spawn": {
+    "player": { "x": 100, "y": 100 },
+    "crowd": 1000,
+    "enemies": [
+      { "x": 600,  "y": 1180, "type": "patrol" },
+      { "x": 1100, "y": 1180, "type": "chaser" },
+      { "x": 1500, "y": 1180, "type": "coward" },
+      { "x": 360,  "y": 1020, "type": "sentry" },
+      { "x": 900,  "y": 700,  "type": "flyer"  },
+      { "x": 1300, "y": 600,  "type": "flyer"  }
+    ]
+  },
   "solids": [
     { "x": 0,    "y": 1216, "w": 6400, "h": 64 },
     { "x": 320,  "y": 1056, "w": 256,  "h": 32 },

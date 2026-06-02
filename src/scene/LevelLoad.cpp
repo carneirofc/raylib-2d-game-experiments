@@ -1,4 +1,5 @@
 #include "scene/LevelLoad.hpp"
+#include "systems/AI.hpp"   // aiBehaviorFromName
 #include <nlohmann/json.hpp>
 #include <raylib.h>
 #include <fstream>
@@ -42,6 +43,14 @@ bool levelLoad(Level& out, LevelSpawn& spawn, const char* path) {
             sp.player.y = s["player"].value("y", 100.0f);
         }
         sp.crowd = s.value("crowd", 0);
+        if (s.contains("enemies")) {
+            for (const auto& en : s["enemies"]) {
+                EnemySpawn es;
+                es.pos      = {en.value("x", 0.0f), en.value("y", 0.0f)};
+                es.behavior = aiBehaviorFromName(en.value("type", std::string{}));
+                sp.enemies.push_back(es);
+            }
+        }
     }
     if (j.contains("grid")) sp.cellSize = j["grid"].value("cellSize", 128.0f);
 

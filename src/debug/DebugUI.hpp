@@ -9,8 +9,10 @@ namespace sc {
 struct DebugState {
     bool  showHud         = true;
     bool  showSpriteEditor = false;
-    int   spawnRequest    = 0;     // entities the HUD wants spawned this frame
+    int   spawnRequest    = 0;     // crowd entities the HUD wants spawned this frame
     int   despawnRequest  = 0;
+    int   enemyRequest    = 0;     // enemies to spawn near the player this frame
+    int   enemyBehavior   = AI_CHASER; // which brain the spawned enemies get
     int   drawnLastFrame  = 0;
     Entity inspected      = INVALID_ENTITY;
 };

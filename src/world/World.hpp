@@ -20,7 +20,12 @@ struct World {
     std::vector<std::uint16_t> sheet;    // index into the sheet/texture table
     std::vector<AnimState>     anim;
     std::vector<Intent>        intent;   // controller intent (input/AI/network)
+    std::vector<AIState>       ai;       // enemy brain selection + memory (enemies only)
     std::vector<std::uint32_t> tint;     // packed 0xRRGGBBAA
+    std::vector<std::int16_t>  health;   // hit points (actors); ignored otherwise
+    std::vector<float>         lifetime; // seconds left; <0 = persistent (bullets tick down)
+    std::vector<float>         cooldown; // seconds until the weapon can fire again
+    std::vector<std::uint8_t>  team;     // Team id, for friendly-fire filtering
     std::vector<Generation>    generation; // per-slot, bumped on destroy
 
     // Sparse-set for dense iteration: dense[0..aliveCount) holds the live
@@ -31,11 +36,25 @@ struct World {
 
     std::vector<EntityIndex> freeList;
     std::size_t              aliveCount = 0;
+
+    // Deferred-destroy queue. Systems iterate the dense list; destroying the slot
+    // they're on mid-loop would swap a not-yet-visited entity into the current
+    // position and skip it. So systems push here instead and the schedule drains
+    // the queue once, at a single safe point (see worldFlushDestroys).
+    std::vector<EntityIndex> destroyQueue;
 };
 
 void   worldInit(World& w, std::size_t reserve = 4096);
 Entity worldCreate(World& w);
 void   worldDestroy(World& w, Entity e);
+
+// Queue a raw slot for destruction at the next flush. Safe to queue the same
+// slot more than once; the flush is idempotent per slot.
+inline void worldQueueDestroy(World& w, EntityIndex idx) { w.destroyQueue.push_back(idx); }
+
+// Destroy everything queued this tick, then clear the queue. Call once per tick
+// after all systems that can kill entities have run.
+void   worldFlushDestroys(World& w);
 
 // Resolve a handle to its current slot, or INVALID_INDEX if the handle is stale
 // (slot recycled) or dead. The single validation point for stored references.
