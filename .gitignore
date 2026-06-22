@@ -5,3 +5,6 @@ build/
 *.obj
 *.o
 CMakeUserPresets.json
+build-linu/
+smoke.err.txt
+smoke.out.txt
