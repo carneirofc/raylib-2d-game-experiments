@@ -28,7 +28,7 @@ jobs:
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DSC_ENABLE_DEBUG=OFF \
-            -DCMAKE_EXE_LINKER_FLAGS="-static-libgcc -static-libstdc++ -static-libwinpthread"
+            -DCMAKE_EXE_LINKER_FLAGS="-static-libgcc -static-libstdc++"
 
       - name: Build
         shell: msys2 {0}
@@ -40,6 +40,11 @@ jobs:
           mkdir dist
           cp build/sidescroler.exe dist/
           cp -r build/assets dist/
+          # Copy winpthread DLL if the exe links it dynamically
+          for dll in libwinpthread-1.dll; do
+            src="/mingw64/bin/$dll"
+            [ -f "$src" ] && cp "$src" dist/ || true
+          done
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
