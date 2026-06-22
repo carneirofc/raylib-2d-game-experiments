@@ -1,5 +1,6 @@
 #include "scene/Combat.hpp"
 #include "scene/Spawn.hpp"
+#include "systems/Juice.hpp" // juiceKick, juiceFlash
 #include <raylib.h>
 #include <vector>
 
@@ -19,6 +20,7 @@ void weaponUpdate(Scene& s, float dt) {
             const float dir = (w.flags[e] & FLAG_FLIP_X) ? -1.0f : 1.0f;
             spawnBullet(s, e, dir);
             w.cooldown[e] = s.weapon.fireCooldown;
+            juiceKick(w.fx[e], s.juice.firePunch, /*stretchTall=*/false); // recoil pop
             sceneSfx(s, s.sfxShoot);
         }
     }
@@ -46,6 +48,9 @@ void combatUpdate(Scene& s) {
             if (!CheckCollisionRecs(bb, ab)) continue;
 
             w.health[a] = static_cast<std::int16_t>(w.health[a] - s.combat.bulletDamage);
+            juiceKick(w.fx[a], s.juice.hitPunch, /*stretchTall=*/false); // recoil from impact
+            juiceFlash(w.fx[a]);                 // white pop
+            sceneShake(s, s.juice.shakeOnHit);   // a little camera kick
             worldQueueDestroy(w, b);
             sceneSfx(s, s.sfxHit);
 

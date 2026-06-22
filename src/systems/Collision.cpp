@@ -1,8 +1,10 @@
 #include "systems/Collision.hpp"
+#include <algorithm> // std::min
 
 namespace sc {
 
-void collisionUpdate(World& w, const Level& lv, const SpatialGrid& grid) {
+void collisionUpdate(World& w, const Level& lv, const SpatialGrid& grid,
+                     const JuiceConfig& juice) {
     for (std::size_t k = 0; k < w.aliveCount; ++k) {
         const EntityIndex e = w.dense[k];
 
@@ -37,8 +39,20 @@ void collisionUpdate(World& w, const Level& lv, const SpatialGrid& grid) {
                 v.x = 0.0f;
             } else {
                 // Resolve along Y. Landing on top => grounded.
-                if (box.y < solid.y) { p.y -= ov.height; w.flags[e] |= FLAG_GROUNDED; }
-                else                  p.y += ov.height;
+                if (box.y < solid.y) {
+                    p.y -= ov.height;
+                    // First floor contact this frame: squash by impact speed. v.y
+                    // is the downward speed about to be zeroed; the grounded check
+                    // fires the kick once (not every frame while resting/walking).
+                    if (!(w.flags[e] & FLAG_GROUNDED) && v.y > juice.landVelMin) {
+                        float amt = std::min(juice.landMax,
+                                             juice.landBase + v.y * juice.landPerVel);
+                        juiceKick(w.fx[e], amt, /*stretchTall=*/false); // flat & wide
+                    }
+                    w.flags[e] |= FLAG_GROUNDED;
+                } else {
+                    p.y += ov.height;
+                }
                 v.y = 0.0f;
             }
             box = {p.x, p.y, s.x, s.y}; // refresh for next solid
