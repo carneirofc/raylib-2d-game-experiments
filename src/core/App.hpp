@@ -20,6 +20,7 @@ struct AppCallbacks {
     std::function<void()>      onFrameStart; // per-frame, pre-update (hotkeys, requests, camera)
     std::function<void()>      render;       // full frame: BeginDrawing .. EndDrawing
     std::function<void()>      shutdown;     // before CloseWindow
+    std::function<bool()>      shouldQuit;   // optional: return true to end the loop (e.g. menu Quit)
 };
 
 // Open the window, run init -> loop(onFrameStart, fixedUpdate*, render) -> shutdown.

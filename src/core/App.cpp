@@ -13,7 +13,7 @@ void appRun(const AppConfig& cfg, const AppCallbacks& cb) {
     if (cb.init) cb.init();
 
     FixedTimestep clock{};
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && !(cb.shouldQuit && cb.shouldQuit())) {
         if (cb.onFrameStart) cb.onFrameStart();
 
         timeAdd(clock, GetFrameTime());
