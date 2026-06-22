@@ -64,4 +64,20 @@ struct AnimState {
     bool          finished = false; // non-looping anim reached its end
 };
 
+// Per-entity procedural sprite distortion ("juice"). A damped spring on the draw
+// scale: gameplay events kick scaleX/scaleY away from rest and juiceUpdate (see
+// systems/Juice) springs them back, overshooting into a squash/stretch wobble.
+// Plain floats (no Vector2) to keep this a leaf header, like the structs above.
+struct SpriteFx {
+    // Spring state — the squash/stretch. Rest is (1,1) = the native AABB size.
+    float scaleX = 1.0f, scaleY = 1.0f; // spring position
+    float velX   = 0.0f, velY   = 0.0f; // spring velocity
+    // Render output, written each tick by juiceUpdate, read by renderEntities:
+    // the spring scale plus continuous breathing/lean, kept separate so those
+    // additive effects don't feed back into the spring.
+    float drawX  = 1.0f, drawY  = 1.0f; // final non-uniform draw scale
+    float lean   = 0.0f;                // final rotation, degrees (velocity tilt)
+    float flash  = 0.0f;                // hit-flash intensity, 1 -> 0 (white tint)
+};
+
 } // namespace sc

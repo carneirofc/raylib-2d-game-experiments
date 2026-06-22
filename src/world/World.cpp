@@ -9,6 +9,7 @@ static void worldGrow(World& w, std::size_t n) {
     w.size.resize(n, Vector2{16.0f, 16.0f});
     w.sheet.resize(n, 0);
     w.anim.resize(n);
+    w.fx.resize(n);
     w.intent.resize(n);
     w.ai.resize(n);
     w.tint.resize(n, 0xFFFFFFFFu);
@@ -27,6 +28,7 @@ void worldInit(World& w, std::size_t reserve) {
     w.size.reserve(reserve);
     w.sheet.reserve(reserve);
     w.anim.reserve(reserve);
+    w.fx.reserve(reserve);
     w.intent.reserve(reserve);
     w.ai.reserve(reserve);
     w.tint.reserve(reserve);
@@ -55,6 +57,7 @@ Entity worldCreate(World& w) {
     w.size[e]   = {16.0f, 16.0f};
     w.sheet[e]    = 0;
     w.anim[e]     = {};
+    w.fx[e]       = {};
     w.intent[e]   = {};
     w.ai[e]       = {};
     w.tint[e]     = 0xFFFFFFFFu;

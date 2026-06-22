@@ -19,6 +19,7 @@ struct World {
     std::vector<Vector2>       size;     // full w/h of the AABB
     std::vector<std::uint16_t> sheet;    // index into the sheet/texture table
     std::vector<AnimState>     anim;
+    std::vector<SpriteFx>      fx;       // procedural squash/stretch (see Juice)
     std::vector<Intent>        intent;   // controller intent (input/AI/network)
     std::vector<AIState>       ai;       // enemy brain selection + memory (enemies only)
     std::vector<std::uint32_t> tint;     // packed 0xRRGGBBAA
