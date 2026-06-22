@@ -26,7 +26,7 @@ void debugApplyRequests(DebugLayer& d, Scene& s) {
 void debugDraw(DebugLayer& d, Scene& s, int drawn) {
     d.dbg.drawnLastFrame = drawn;
     rlImGuiBegin();
-    debugHud(d.dbg, s.world, s.phys, s.player);
+    debugHud(d.dbg, s.world, s.phys, s.player, s.input, s.juice);
     spriteEditorDraw(d.editor, d.dbg.showSpriteEditor, s.bank, s.textures);
     rlImGuiEnd();
 }

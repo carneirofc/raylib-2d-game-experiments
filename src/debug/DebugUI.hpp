@@ -2,6 +2,7 @@
 #include "world/World.hpp"
 #include "systems/Movement.hpp"
 #include "systems/Input.hpp"
+#include "systems/Juice.hpp"
 
 namespace sc {
 
@@ -18,8 +19,9 @@ struct DebugState {
 };
 
 // Renders the main debug HUD: FPS/frame-time, entity counts, spawn/despawn
-// controls, physics tuning, and a simple entity inspector. ImGui frame must
-// already be begun by the caller.
-void debugHud(DebugState& dbg, World& w, Physics& phys, PlayerConfig& player);
+// controls, physics tuning, input state + buffer, squash/stretch (juice) tuning,
+// and a simple entity inspector. ImGui frame must already be begun by the caller.
+void debugHud(DebugState& dbg, World& w, Physics& phys, PlayerConfig& player,
+              InputState& input, JuiceConfig& juice);
 
 } // namespace sc
