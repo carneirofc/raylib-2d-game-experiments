@@ -33,7 +33,7 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DSC_ENABLE_DEBUG=OFF \
+            -DSC_ENABLE_DEBUG=ON \
             -DCMAKE_EXE_LINKER_FLAGS="-static-libgcc -static-libstdc++"
 
       - name: Build
@@ -77,7 +77,7 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DSC_ENABLE_DEBUG=OFF
+            -DSC_ENABLE_DEBUG=ON
 
       - name: Build
         run: cmake --build build -j
