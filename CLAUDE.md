@@ -5,7 +5,7 @@
 ## Stack
 - **C++23**, g++ 15.1.0 (MinGW) on Windows.
 - **raylib 5.5** — window/render/input/audio.
-- **Dear ImGui 1.91.5** + **rlImGui** — debug UI + sprite/anim editor.
+- **Dear ImGui 1.92.1** + **rlImGui** (pinned to `main`) — debug UI + sprite/anim editor.
 - **nlohmann/json 3.11.3** — sprite/anim sidecar files.
 - **CMake 4.x** + FetchContent — deps fetched at configure time, no manual installs.
 

@@ -27,8 +27,8 @@ Built as a data-oriented (ECS-lite) sandbox aimed at thousands of entities at 60
 
 - **C++23**, g++ 15.1.0 (MinGW) on Windows
 - **raylib 5.5** — window / render / input / audio
-- **Dear ImGui** + **rlImGui** — debug UI + sprite editor
-- **nlohmann/json** — sprite/level sidecar files
+- **Dear ImGui 1.92.1** + **rlImGui** (pinned to `main`) — debug UI + sprite editor
+- **nlohmann/json 3.11.3** — sprite/level sidecar files
 - **CMake 4.x** + FetchContent — all deps fetched at configure time, no manual installs
 
 ## Build
@@ -54,6 +54,10 @@ Example release build:
 cmake -S . -B build -G "MinGW Makefiles" -DSC_ENABLE_DEBUG=OFF
 cmake --build build -j
 ```
+
+> See [docs/references.md](docs/references.md) for the exact dependency pins, the
+> tag-driven release pipeline, dependency-upgrade notes, and curated references for the
+> techniques used here.
 
 ## Run
 
